@@ -6,6 +6,7 @@ public class Garlic : MonoBehaviour
 {
 
     public bool active;
+    public AudioSource painSound;
     private SpriteRenderer sprRenderer;
     // Start is called before the first frame update
     void Start()
@@ -80,7 +81,7 @@ public class Garlic : MonoBehaviour
         {
             GameObject vampire = GameManager.reference.vampire;
             float randy = Random.Range(0f, 1f);
-            //play hiss
+            painSound.Play();
             print("ow!");
             if (randy < 0.3f)
             {

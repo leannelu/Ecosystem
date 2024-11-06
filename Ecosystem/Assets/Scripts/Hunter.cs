@@ -17,7 +17,8 @@ public class Hunter : MonoBehaviour
     public float attackSpeed;
     public float speed;
     public GameObject garlic;
-
+    public AudioSource hitSound;
+    public AudioSource vampKill;
     private GameObject vampire;
     private Rigidbody2D rb;
     private Vector3 hereToVampire;
@@ -41,6 +42,8 @@ public class Hunter : MonoBehaviour
         //rightTop = (Vector2)cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, cam.pixelHeight, cam.nearClipPlane));
         rightBottom = cam.ScreenToWorldPoint(new Vector3(cam.pixelWidth, 0, cam.nearClipPlane));
         garlic = GameObject.Find("garlic");
+        hitSound = GameObject.Find("slash").GetComponent<AudioSource>();
+        vampKill = GameObject.Find("kill").GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -161,11 +164,13 @@ public class Hunter : MonoBehaviour
             float randy = Random.Range(0f, 1f);
             if (randy < 0.7f)
             {
+                hitSound.Play();
                 Destroy(vampire);
                 StartState(HunterState.Trap);
             }
             else
             {
+                vampKill.Play();
                 Destroy(this.gameObject);
             }
         }

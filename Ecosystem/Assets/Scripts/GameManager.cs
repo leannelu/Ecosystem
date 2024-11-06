@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
             {
                 float randy = Random.Range(0f, 1f);
                 print(randy);
-                if (randy < 0.005f)
+                if (randy < 0.003f)
                 {
                     vampire = GameObject.Instantiate(vampirePrefab, vampPos, Quaternion.identity);
                 }

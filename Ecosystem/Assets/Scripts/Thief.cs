@@ -18,6 +18,7 @@ public class Thief : MonoBehaviour
     public float xspeed;
     public float yspeed;
     public bool visible;
+    public AudioSource collectSound;
 
     private Rigidbody2D rb;
     private SpriteRenderer sprRender;
@@ -41,6 +42,7 @@ public class Thief : MonoBehaviour
         treasure = GameObject.Find("treasure");
         cam = Camera.main;
         visible = false;
+        collectSound = GameObject.Find("collect").GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -97,6 +99,10 @@ public class Thief : MonoBehaviour
                 if(treasure.transform.position.x - this.transform.position.x < 1 &&
                     treasure.transform.position.y - this.transform.position.y < 1)
                 {
+                    if(!collectSound.isPlaying)
+                    {
+                        collectSound.Play();
+                    }
                     StartState(ThiefState.Flee);
                 }
                 break;

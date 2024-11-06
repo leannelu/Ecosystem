@@ -22,6 +22,8 @@ public class Vampire : MonoBehaviour
     public float chaseSpeed;
     public Sprite neutral;
     public Sprite attack;
+    public AudioSource hissSound;
+    public AudioSource killSound;
     private GameObject coffin;
     private Coffin coffinScript;
     private Rigidbody2D rb;
@@ -43,6 +45,8 @@ public class Vampire : MonoBehaviour
         coffinScript = coffin.GetComponent<Coffin>();
         treasure = GameObject.Find("treasure");
         neutral = sprRender.sprite;
+        hissSound = GameObject.Find("hiss").GetComponent<AudioSource>();
+        killSound = GameObject.Find("kill").GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -74,6 +78,7 @@ public class Vampire : MonoBehaviour
                 Invoke("WakeUp", 10);
                 break;
             case VampireState.Chase:
+                hissSound.Play();
                 //this.GetComponent<SpriteRenderer>().sprite = attack;
                 GameManager.reference.vampChasing = true;
                 thiefGone = false;
@@ -179,6 +184,7 @@ public class Vampire : MonoBehaviour
     {
         if(collision.gameObject == thief)
         {
+            killSound.Play();
             GameObject.Destroy(thief);
             thief = null;
         }
