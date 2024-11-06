@@ -24,6 +24,7 @@ public class Thief : MonoBehaviour
     private int facing = 1; //-1 is left, 1 is right
     private Coffin coffin;
     private GameObject treasure;
+    private Camera cam;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +35,8 @@ public class Thief : MonoBehaviour
         GameObject coffinObj = GameObject.Find("coffin");
         coffin = coffinObj.GetComponent<Coffin>();
         treasure = GameObject.Find("treasure");
+        GameManager.reference.thief = this.gameObject;
+        cam = Camera.main;
     }
 
     // Update is called once per frame
@@ -62,11 +65,11 @@ public class Thief : MonoBehaviour
                 hereToTreasure = hereToTreasure.normalized;
                 facing = 1;
                 sprRender.flipX = false;
-                xspeed = Random.Range(0.5f, 1.5f);
+                xspeed = Random.Range(1f, 2f);
                 rb.AddForce(hereToTreasure * xspeed, ForceMode2D.Impulse);
                 break;
             case ThiefState.Flee:
-                xspeed = Random.Range(1f, 2f);
+                xspeed = Random.Range(1.5f, 2f);
                 rb.AddForce(Vector2.down * xspeed, ForceMode2D.Impulse);
                 break;
         }
@@ -92,9 +95,13 @@ public class Thief : MonoBehaviour
                 }
                 break;
             case ThiefState.Flee:
-                if(this.transform.position.y < 0)
+                Vector3 bottomEdge = cam.ScreenToWorldPoint(new Vector3(0, 0, 0));
+                print(bottomEdge);
+                print(this.transform.position);
+                if(this.transform.position.y < bottomEdge.y)
                 {
-                    Destroy(this);
+                    GameManager.reference.vampire.GetComponent<Vampire>().Return();
+                    Destroy(this.gameObject);
                 }
                 break;
         }
