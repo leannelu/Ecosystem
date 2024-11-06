@@ -26,6 +26,10 @@ public class Thief : MonoBehaviour
     private GameObject treasure;
     private Camera cam;
 
+    private void Awake()
+    {
+        
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -35,8 +39,8 @@ public class Thief : MonoBehaviour
         GameObject coffinObj = GameObject.Find("coffin");
         coffin = coffinObj.GetComponent<Coffin>();
         treasure = GameObject.Find("treasure");
-        GameManager.reference.thief = this.gameObject;
         cam = Camera.main;
+        visible = false;
     }
 
     // Update is called once per frame
@@ -65,11 +69,13 @@ public class Thief : MonoBehaviour
                 hereToTreasure = hereToTreasure.normalized;
                 facing = 1;
                 sprRender.flipX = false;
-                xspeed = Random.Range(1f, 2f);
+                xspeed = Random.Range(0.8f, 1.4f);
+                print("thief steal speed: " + xspeed);
                 rb.AddForce(hereToTreasure * xspeed, ForceMode2D.Impulse);
                 break;
             case ThiefState.Flee:
-                xspeed = Random.Range(1.5f, 2f);
+                xspeed = Random.Range(1f, 1.8f);
+                print("thief flee speed: " + xspeed);
                 rb.AddForce(Vector2.down * xspeed, ForceMode2D.Impulse);
                 break;
         }
@@ -96,11 +102,10 @@ public class Thief : MonoBehaviour
                 break;
             case ThiefState.Flee:
                 Vector3 bottomEdge = cam.ScreenToWorldPoint(new Vector3(0, 0, 0));
-                print(bottomEdge);
-                print(this.transform.position);
                 if(this.transform.position.y < bottomEdge.y)
                 {
-                    GameManager.reference.vampire.GetComponent<Vampire>().Return();
+                    if(GameManager.reference.vampire != null)
+                        GameManager.reference.vampire.GetComponent<Vampire>().Return();
                     Destroy(this.gameObject);
                 }
                 break;

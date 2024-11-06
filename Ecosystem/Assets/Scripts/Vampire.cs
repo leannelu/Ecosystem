@@ -13,13 +13,15 @@ public class Vampire : MonoBehaviour
         Chase
     }
 
-    private VampireState _currentState = VampireState.Patrol;
+    public VampireState _currentState = VampireState.Patrol;
 
     private bool sleep;
     public float xspeed;
     public float yspeed;
     public float returnSpeed;
     public float chaseSpeed;
+    public Sprite neutral;
+    public Sprite attack;
     private GameObject coffin;
     private Coffin coffinScript;
     private Rigidbody2D rb;
@@ -28,7 +30,7 @@ public class Vampire : MonoBehaviour
     private GameObject treasure;
     private GameObject thief;
     private Thief thiefScript;
-    private bool captured;
+    public bool thiefGone;
 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +42,7 @@ public class Vampire : MonoBehaviour
         sleep = false;
         coffinScript = coffin.GetComponent<Coffin>();
         treasure = GameObject.Find("treasure");
-        GameManager.reference.vampire = this.gameObject;
+        neutral = sprRender.sprite;
     }
 
     // Update is called once per frame
@@ -68,11 +70,13 @@ public class Vampire : MonoBehaviour
             case VampireState.Sleep:
                 Vector3 hereToCoffin = coffin.transform.position - this.transform.position;
                 hereToCoffin = hereToCoffin.normalized;
-                rb.AddForce(hereToCoffin * xspeed, ForceMode2D.Impulse);
+                rb.AddForce(hereToCoffin * xspeed * 2, ForceMode2D.Impulse);
                 Invoke("WakeUp", 10);
                 break;
             case VampireState.Chase:
-                captured = false;
+                //this.GetComponent<SpriteRenderer>().sprite = attack;
+                GameManager.reference.vampChasing = true;
+                thiefGone = false;
                 break;
         }
 
@@ -110,9 +114,8 @@ public class Vampire : MonoBehaviour
                 }
                 break;
             case VampireState.Chase:
-                if (thief == null)
+                if (thiefGone)
                 {
-                    print("return");
                     if (coffinScript.inCoffin)
                         StartState(VampireState.Patrol);
                     break;
@@ -149,6 +152,7 @@ public class Vampire : MonoBehaviour
                 sprRender.flipX = false;
                 rb.AddForce(Vector2.right * facing * xspeed, ForceMode2D.Impulse);
                 coffinScript.inCoffin = false;
+                GameManager.reference.vampChasing = false;
                 break;
         }
     }
@@ -163,7 +167,6 @@ public class Vampire : MonoBehaviour
     }
     private void GoSleep()
     {
-        print("sleep");
         sleep = true;
     }
 
@@ -176,15 +179,15 @@ public class Vampire : MonoBehaviour
     {
         if(collision.gameObject == thief)
         {
-            Destroy(thief);
+            GameObject.Destroy(thief);
             thief = null;
         }
-        print("returning");
-        captured = true;
         Return();
     }
     public void Return()
     {
+        //sprRender.sprite = neutral;
+        thiefGone = true;
         rb.velocity = Vector2.zero;
         Vector3 hereToCoffin = coffin.transform.position - this.transform.position;
         hereToCoffin = hereToCoffin.normalized;
